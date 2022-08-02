@@ -37,7 +37,6 @@ status_light = neopixel.NeoPixel(
 wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(
     esp, secrets, status_light)
 
-DELAY = 90
 M = 64
 N = 32
 
@@ -106,11 +105,14 @@ home_label.x = int((home_lon - lon_min)/lon_width * M)
 home_label.y = int((lat_max - home_lat)/lat_height * N)
 group.append(home_label)
 
-#Uncomment to use a watchdog timer. Don't forget to add w.feed()!
-#w.mode = WatchDogMode.RESET
+w.timeout = 16.0
+w.mode = WatchDogMode.RESET
+w.feed()
 
 def fetch_atc():
+    w.feed()
     atc_get = wifi.get(URL, headers=my_headers)
+    w.feed()
     atc_json = atc_get.json()
     atc_json = atc_json["states"]
     print(atc_json)
@@ -133,6 +135,27 @@ def fetch_atc():
         j = int((j - lon_min)/lon_width * M)
         bitmap[j, i] = 1
 
+def feed_dog():
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+    time.sleep(10)
+    w.feed()
+
 while True:
     try:
         fetch_atc()
@@ -141,4 +164,4 @@ while True:
         continue
         print("Failed to get data, retrying\n", e)
     atc_get = None
-    time.sleep(DELAY)
+    feed_dog()
