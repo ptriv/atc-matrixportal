@@ -12,8 +12,6 @@ from adafruit_esp32spi import adafruit_esp32spi
 from adafruit_esp32spi import adafruit_esp32spi_wifimanager
 import json
 import gc
-from microcontroller import watchdog as w
-from watchdog import WatchDogMode
 
 # Get wifi details and more from a secrets.py file
 try:
@@ -36,6 +34,8 @@ status_light = neopixel.NeoPixel(
 #Setup Wi-Fi connection manager
 wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(
     esp, secrets, status_light)
+
+DELAY = 900
 
 M = 64
 N = 32
@@ -105,14 +105,8 @@ home_label.x = int((home_lon - lon_min)/lon_width * M)
 home_label.y = int((lat_max - home_lat)/lat_height * N)
 group.append(home_label)
 
-w.timeout = 16.0
-w.mode = WatchDogMode.RESET
-w.feed()
-
 def fetch_atc():
-    w.feed()
     atc_get = wifi.get(URL, headers=my_headers)
-    w.feed()
     atc_json = atc_get.json()
     atc_json = atc_json["states"]
     print(atc_json)
@@ -135,26 +129,6 @@ def fetch_atc():
         j = int((j - lon_min)/lon_width * M)
         bitmap[j, i] = 1
 
-def feed_dog():
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
-    time.sleep(10)
-    w.feed()
 
 while True:
     try:
@@ -164,4 +138,4 @@ while True:
         continue
         print("Failed to get data, retrying\n", e)
     atc_get = None
-    feed_dog()
+    time.sleep(DELAY)
