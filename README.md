@@ -26,5 +26,5 @@ Note: The Northern extent (lat_max) is automatically calculated such that the ge
 - home_lat : In WGS84 coordinates (decimals), the latitude of your home point.
 
 ## Known issues
-1. OpenSky registered user API access appears to not be working at this time. Credentials don't appear to be passed throuh the GET request.
+1. OpenSky registered user API access appears to not be working at this time. Credentials don't appear to be passed through the GET request.
 2. Board may crash from time-to-time if there is an error in fetching the data. Haven't been able to address this with a watchdog timer either due to the DELAY interval, so just tap the manual RESET button if this happens.
